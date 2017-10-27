@@ -56,6 +56,10 @@ class PaymentIdentified(models.Model):
 
         return {}
 
+    @api.multi
+    def confirm(self):
+        self.state = 'done'
+
     partner_id = fields.Many2one('res.partner', string='Customer',
                                 required=True)
     account_payment_id = fields.Many2one('account.payment', string='Payment',
@@ -66,11 +70,12 @@ class PaymentIdentified(models.Model):
                                         string='Identified Payments')
     state = fields.Selection([
         ('draft', 'Draft'),
-        ('open', 'Open'),
+        #('open', 'Open'),
         ('done', 'Done'),
         ('cancel', 'Cancelled'),
         ], string='Status', readonly=True, copy=False, index=True,
-        track_visibility='onchange', default='draft')
+        track_visibility='onchange',
+        default='draft')
 
 
 class AccountPaymentIdentified(models.Model):

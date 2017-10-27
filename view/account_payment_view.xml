@@ -13,6 +13,7 @@
                 <field name="identified_ids" attrs="{'invisible': ['|', ('unidentified','=',False)]}" mode="tree">
                     <tree string="Identified Payments" >
                         <field name="partner_id" />
+                        <field name="state" />
                     </tree>
                 </field>
             </xpath>
@@ -29,16 +30,22 @@
                     <button
                         name="calculate"
                         string="Calculate"
-                        type="object"/>
+                        type="object"
+                        attrs="{'invisible': [('state','not in',['draft'])]}"/>
+                    <button
+                        name="confirm"
+                        string="Confirm"
+                        type="object"
+                        attrs="{'invisible': [('state','not in',['draft'])]}"/>
                     <field name="state" widget="statusbar" />
                 </header>
                 <sheet>
                     <group col="4">
                         <!--<group >-->
-                            <field name="partner_id"/>
+                            <field name="partner_id" attrs="{'readonly': [('state','not in',['draft'])]}"/>
                         <!--</group>-->
                     </group>
-                    <field name="account_payments_identified_ids">
+                    <field name="account_payments_identified_ids" attrs="{'readonly': [('state','not in',['draft'])]}">
                         <tree string="Invoice" editable="bottom">
                             <field name="account_invoice_name" />
                             <field name="account_invoice_amount_total" />
