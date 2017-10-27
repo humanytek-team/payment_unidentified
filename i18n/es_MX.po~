@@ -1,0 +1,191 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* payment_unidentified
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0+e-20170815\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-10-27 14:23+0000\n"
+"PO-Revision-Date: 2017-10-27 14:23+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_amount
+msgid "Amount"
+msgstr "Monto"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_account_invoice_amount_total
+msgid "Amount Total"
+msgstr "Amount Total"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_account_invoice_residual
+msgid "Amount of Debt"
+msgstr "Amount of Debt"
+
+#. module: payment_unidentified
+#: model:ir.ui.view,arch_db:payment_unidentified.payment_identified_view
+msgid "Calculate"
+msgstr "Calcular"
+
+#. module: payment_unidentified
+#: selection:payment.identified,state:0
+msgid "Cancelled"
+msgstr "Cancelled"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_confirm
+msgid "Confirm"
+msgstr "Confirm"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_create_uid
+#: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_create_date
+#: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified_create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_currency_id
+msgid "Currency"
+msgstr "Moneda"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified_partner_id
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_account_invoice_date
+msgid "Date"
+msgstr "Fecha"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_display_name
+#: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified_display_name
+msgid "Display Name"
+msgstr "Nombre a mostrar"
+
+#. module: payment_unidentified
+#: selection:payment.identified,state:0
+msgid "Done"
+msgstr "Done"
+
+#. module: payment_unidentified
+#: selection:payment.identified,state:0
+msgid "Draft"
+msgstr "Draft"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_id
+#: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified_id
+msgid "ID"
+msgstr "ID"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_ids
+#: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified_account_payments_identified_ids
+#: model:ir.ui.view,arch_db:payment_unidentified.payment_identified_view
+#: model:ir.ui.view,arch_db:payment_unidentified.view_account_payment_unidentified_form
+msgid "Identified Payments"
+msgstr "Identified Payments"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_account_invoice_name
+#: model:ir.ui.view,arch_db:payment_unidentified.payment_identified_view
+msgid "Invoice"
+msgstr "Factura"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,help:payment_unidentified.field_account_payment_identified_account_invoice_date
+msgid "Keep empty to use the current date"
+msgstr "Mantenga vacío para usar la fecha actual"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified___last_update
+#: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_write_uid
+#: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_write_date
+#: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified_write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: payment_unidentified
+#: selection:payment.identified,state:0
+msgid "Open"
+msgstr "Open"
+
+#. module: payment_unidentified
+#: model:ir.model,name:payment_unidentified.model_res_partner
+msgid "Partner"
+msgstr "Empresa"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_account_invoice_id
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_payment_identified_id
+#: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified_account_payment_id
+msgid "Payment"
+msgstr "Payment"
+
+#. module: payment_unidentified
+#: model:ir.model,name:payment_unidentified.model_account_payment
+msgid "Payments"
+msgstr "Pagos"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,help:payment_unidentified.field_account_payment_identified_account_invoice_residual
+msgid "Remaining amount due."
+msgstr "Monto adeudado."
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified_state
+msgid "Status"
+msgstr "Estado"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,help:payment_unidentified.field_account_payment_identified_account_invoice_name
+msgid "Technical field holding the number given to the invoice, automatically set when the invoice is validated then stored to set the same number again if the invoice is cancelled, set to draft and re-validated."
+msgstr "Campo técnico que contiene el número dado a la factura, establecido automáticamente cuando esta es validada y guardado para recuperar el número si se cancela la factura, se cambia a borrador o se re-valida."
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_unidentified
+msgid "Unidentified"
+msgstr "Unidentified"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_res_partner_unidentified_payment
+#: model:ir.model.fields,field_description:payment_unidentified.field_res_users_unidentified_payment
+msgid "Unidentified Payment"
+msgstr "Unidentified Payment"
+
+#. module: payment_unidentified
+#: model:ir.model,name:payment_unidentified.model_account_payment_identified
+msgid "account.payment.identified"
+msgstr "account.payment.identified"
+
+#. module: payment_unidentified
+#: model:ir.model,name:payment_unidentified.model_payment_identified
+msgid "payment.identified"
+msgstr "payment.identified"
+
