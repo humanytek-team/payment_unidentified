@@ -13,6 +13,7 @@
                 <field name="identified_ids" attrs="{'invisible': ['|', ('unidentified','=',False)]}" mode="tree">
                     <tree string="Identified Payments" >
                         <field name="partner_id" />
+                        <field name="amount_identified" />
                         <field name="state" />
                     </tree>
                 </field>
@@ -43,6 +44,7 @@
                     <group col="4">
                         <!--<group >-->
                             <field name="partner_id" attrs="{'readonly': [('state','not in',['draft'])]}"/>
+                            <field name="amount_identified" />
                         <!--</group>-->
                     </group>
                     <field name="account_payments_identified_ids" attrs="{'readonly': [('state','not in',['draft'])]}">

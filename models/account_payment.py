@@ -70,12 +70,20 @@ class PaymentIdentified(models.Model):
                                         string='Identified Payments')
     state = fields.Selection([
         ('draft', 'Draft'),
-        #('open', 'Open'),
         ('done', 'Done'),
         ('cancel', 'Cancelled'),
         ], string='Status', readonly=True, copy=False, index=True,
         track_visibility='onchange',
         default='draft')
+    amount_identified = fields.Float('Identified Amount',
+                            compute='_compute_amount_identified', readonly=True)
+
+    @api.one
+    def _compute_amount_identified(self):
+        self.amount_identified = sum([account_payments_identified.amount
+                                for account_payments_identified in
+                                self.account_payments_identified_ids
+                                if account_payments_identified.confirm])
 
 
 class AccountPaymentIdentified(models.Model):
