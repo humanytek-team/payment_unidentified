@@ -100,12 +100,12 @@ class AccountPayment(models.Model):
 
         if self.unidentified:
             aml_dict = self._get_shared_move_line_unidentified(debit, credit, amount_currency, move.id, False)
-            aml_dict.update(self._get_move_line_unidentified())
+            aml_dict.update(self._get_counterpart_move_line_unidentified())
             aml_dict.update({'currency_id': currency_id})
             aml = aml_obj.create(aml_dict)
 
             counterpart_aml_dict = self._get_shared_move_line_unidentified(credit, debit, amount_currency, move.id, False)
-            counterpart_aml_dict.update(self._get_counterpart_move_line_unidentified(self.invoice_ids))
+            counterpart_aml_dict.update(self._get_move_line_unidentified())
             counterpart_aml_dict.update({'currency_id': currency_id})
             counterpart_aml = aml_obj.create(counterpart_aml_dict)
 
