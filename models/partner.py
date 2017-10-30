@@ -30,3 +30,9 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     unidentified_payment = fields.Boolean('Unidentified Payment')
+    account_tax_receivable_id = fields.Many2one('account.account',
+        company_dependent=True,
+        string="Tax Receivable")
+    account_tax__received_id = fields.Many2one('account.account',
+        company_dependent=True,
+        string="Tax Received")

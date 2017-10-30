@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0+e-20170815\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-27 14:23+0000\n"
-"PO-Revision-Date: 2017-10-27 14:23+0000\n"
+"POT-Creation-Date: 2017-10-30 22:26+0000\n"
+"PO-Revision-Date: 2017-10-30 22:26+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -23,12 +23,12 @@ msgstr "Monto"
 #. module: payment_unidentified
 #: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_account_invoice_amount_total
 msgid "Amount Total"
-msgstr "Amount Total"
+msgstr "Importe Total"
 
 #. module: payment_unidentified
 #: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_account_invoice_residual
 msgid "Amount of Debt"
-msgstr "Amount of Debt"
+msgstr "Importe Adeudado"
 
 #. module: payment_unidentified
 #: model:ir.ui.view,arch_db:payment_unidentified.payment_identified_view
@@ -38,12 +38,19 @@ msgstr "Calcular"
 #. module: payment_unidentified
 #: selection:payment.identified,state:0
 msgid "Cancelled"
-msgstr "Cancelled"
+msgstr "Cancelado"
 
 #. module: payment_unidentified
 #: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_confirm
+#: model:ir.ui.view,arch_db:payment_unidentified.payment_identified_view
 msgid "Confirm"
-msgstr "Confirm"
+msgstr "Confirmar"
+
+#. module: payment_unidentified
+#: code:addons/payment_unidentified/models/account_payment.py:80
+#, python-format
+msgid "Counterpart"
+msgstr "Counterpart"
 
 #. module: payment_unidentified
 #: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_create_uid
@@ -55,7 +62,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_create_date
 #: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified_create_date
 msgid "Created on"
-msgstr "Creado el"
+msgstr "Creado en"
 
 #. module: payment_unidentified
 #: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_currency_id
@@ -66,6 +73,20 @@ msgstr "Moneda"
 #: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified_partner_id
 msgid "Customer"
 msgstr "Cliente"
+
+#. module: payment_unidentified
+#: code:addons/payment_unidentified/models/account_payment.py:130
+#: code:addons/payment_unidentified/models/account_payment.py:145
+#, python-format
+msgid "Customer Payment"
+msgstr "Customer Payment"
+
+#. module: payment_unidentified
+#: code:addons/payment_unidentified/models/account_payment.py:132
+#: code:addons/payment_unidentified/models/account_payment.py:147
+#, python-format
+msgid "Customer Refund"
+msgstr "Customer Refund"
 
 #. module: payment_unidentified
 #: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_account_invoice_date
@@ -81,12 +102,12 @@ msgstr "Nombre a mostrar"
 #. module: payment_unidentified
 #: selection:payment.identified,state:0
 msgid "Done"
-msgstr "Done"
+msgstr "Hecho"
 
 #. module: payment_unidentified
 #: selection:payment.identified,state:0
 msgid "Draft"
-msgstr "Draft"
+msgstr "Borrador"
 
 #. module: payment_unidentified
 #: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_id
@@ -95,12 +116,17 @@ msgid "ID"
 msgstr "ID"
 
 #. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified_amount_identified
+msgid "Identified Amount"
+msgstr "Identified Amount"
+
+#. module: payment_unidentified
 #: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_ids
 #: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified_account_payments_identified_ids
 #: model:ir.ui.view,arch_db:payment_unidentified.payment_identified_view
 #: model:ir.ui.view,arch_db:payment_unidentified.view_account_payment_unidentified_form
 msgid "Identified Payments"
-msgstr "Identified Payments"
+msgstr "Pagos Identificados"
 
 #. module: payment_unidentified
 #: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_account_invoice_name
@@ -132,11 +158,6 @@ msgid "Last Updated on"
 msgstr "Última actualización el"
 
 #. module: payment_unidentified
-#: selection:payment.identified,state:0
-msgid "Open"
-msgstr "Open"
-
-#. module: payment_unidentified
 #: model:ir.model,name:payment_unidentified.model_res_partner
 msgid "Partner"
 msgstr "Empresa"
@@ -146,7 +167,7 @@ msgstr "Empresa"
 #: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_identified_payment_identified_id
 #: model:ir.model.fields,field_description:payment_unidentified.field_payment_identified_account_payment_id
 msgid "Payment"
-msgstr "Payment"
+msgstr "Pago"
 
 #. module: payment_unidentified
 #: model:ir.model,name:payment_unidentified.model_account_payment
@@ -164,6 +185,18 @@ msgid "Status"
 msgstr "Estado"
 
 #. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_res_partner_account_tax_receivable_id
+#: model:ir.model.fields,field_description:payment_unidentified.field_res_users_account_tax_receivable_id
+msgid "Tax Receivable"
+msgstr "Tax Receivable"
+
+#. module: payment_unidentified
+#: model:ir.model.fields,field_description:payment_unidentified.field_res_partner_account_tax__received_id
+#: model:ir.model.fields,field_description:payment_unidentified.field_res_users_account_tax__received_id
+msgid "Tax Received"
+msgstr "Tax Received"
+
+#. module: payment_unidentified
 #: model:ir.model.fields,help:payment_unidentified.field_account_payment_identified_account_invoice_name
 msgid "Technical field holding the number given to the invoice, automatically set when the invoice is validated then stored to set the same number again if the invoice is cancelled, set to draft and re-validated."
 msgstr "Campo técnico que contiene el número dado a la factura, establecido automáticamente cuando esta es validada y guardado para recuperar el número si se cancela la factura, se cambia a borrador o se re-valida."
@@ -171,13 +204,13 @@ msgstr "Campo técnico que contiene el número dado a la factura, establecido au
 #. module: payment_unidentified
 #: model:ir.model.fields,field_description:payment_unidentified.field_account_payment_unidentified
 msgid "Unidentified"
-msgstr "Unidentified"
+msgstr "No identificado"
 
 #. module: payment_unidentified
 #: model:ir.model.fields,field_description:payment_unidentified.field_res_partner_unidentified_payment
 #: model:ir.model.fields,field_description:payment_unidentified.field_res_users_unidentified_payment
 msgid "Unidentified Payment"
-msgstr "Unidentified Payment"
+msgstr "Pago no Identificado"
 
 #. module: payment_unidentified
 #: model:ir.model,name:payment_unidentified.model_account_payment_identified
