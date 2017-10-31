@@ -21,6 +21,7 @@
 ###############################################################################
 
 from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -33,6 +34,22 @@ class AccountPayment(models.Model):
     identified_ids = fields.One2many('payment.identified',
                                         'account_payment_id',
                                         string='Identified Payments')
+    amount_identified = fields.Float('Identified Amount',
+                        compute='_compute_amount_identified', readonly=True)
+    #amount_unidentified = fields.Float('Unidentified Amount',
+                        #compute='_compute_amount_unidentified', readonly=True)
+
+    @api.one
+    def _compute_amount_identified(self):
+        self.amount_identified = sum([identified.amount_identified
+                                for identified in
+                                self.identified_ids
+                                if identified.state == 'done'])
+
+    #@api.one
+    #def _compute_amount_unidentified(self):
+        #self.amount_unidentified = self.amount - self.amount_identified
+
 
 
     def _create_payment_entry(self, amount):
@@ -118,9 +135,9 @@ class AccountPayment(models.Model):
             'partner_id': self.env['res.partner']._find_accounting_partner(self.partner_id).id or False,
             'invoice_id': False,
             'move_id': move_id,
-            'debit': debit * 0.16,
-            'credit': credit * 0.16,
-            'amount_currency': amount_currency * 0.16 or False,
+            'debit': (debit / 1.16) * 0.16,
+            'credit': (credit / 1.16 ) * 0.16,
+            'amount_currency': (amount_currency / 1.16) * 0.16 or False,
         }
 
     def _get_move_line_unidentified(self, invoice=False):
@@ -154,18 +171,18 @@ class AccountPayment(models.Model):
         }
 
 
-    def _get_shared_move_line_vals(self, debit, credit, amount_currency, move_id, invoice_id=False):
-        if self.unidentified:
-            debit = debit - (debit * 0.16)
-            credit = credit - (credit * 0.16)
-        return {
-            'partner_id': self.payment_type in ('inbound', 'outbound') and self.env['res.partner']._find_accounting_partner(self.partner_id).id or False,
-            'invoice_id': invoice_id and invoice_id.id or False,
-            'move_id': move_id,
-            'debit': debit,
-            'credit': credit,
-            'amount_currency': amount_currency or False,
-        }
+    #def _get_shared_move_line_vals(self, debit, credit, amount_currency, move_id, invoice_id=False):
+        #if self.unidentified:
+            #debit = debit - (debit * 0.16)
+            #credit = credit - (credit * 0.16)
+        #return {
+            #'partner_id': self.payment_type in ('inbound', 'outbound') and self.env['res.partner']._find_accounting_partner(self.partner_id).id or False,
+            #'invoice_id': invoice_id and invoice_id.id or False,
+            #'move_id': move_id,
+            #'debit': debit,
+            #'credit': credit,
+            #'amount_currency': amount_currency or False,
+        #}
 
 
 class PaymentIdentified(models.Model):
@@ -191,6 +208,8 @@ class PaymentIdentified(models.Model):
 
     @api.multi
     def confirm(self):
+        if self.amount_identified > self.aaccount_payment_id.amount_identified:
+            raise ValidationError(_('The amount must not exceed the amount identified'))
         self.state = 'done'
 
     partner_id = fields.Many2one('res.partner', string='Customer',
