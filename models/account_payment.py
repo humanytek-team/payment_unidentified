@@ -39,7 +39,7 @@ class AccountPayment(models.Model):
                         compute='_compute_amount_identified', readonly=True)
     amount_unidentified = fields.Float('Unidentified Amount',
                         compute='_compute_amount_unidentified', readonly=True)
-    partner_unidentified_id = fields.Many2one('account.payment',
+    payment_unidentified_id = fields.Many2one('account.payment',
                                     string='Unidentified ')
 
     @api.one
@@ -128,7 +128,7 @@ class AccountPayment(models.Model):
 
         if self.identified:
             aml.write({'account_id': self.destination_account_id.id})
-            aml.write({'partner_id': self.partner_unidentified_id.id})
+            aml.write({'partner_id': self.payment_unidentified_id.partner_id.id})
         if self.unidentified:
             aml_dict = self._get_shared_move_line_unidentified(debit, credit, amount_currency, move.id, False)
             aml_dict.update(self._get_counterpart_move_line_unidentified())
@@ -248,8 +248,9 @@ class PaymentIdentified(models.Model):
                         'partner_type': 'customer',
                         'payment_method_id': self.account_payment_id.journal_id.inbound_payment_method_ids[0].id,
                         'invoice_ids': [(4, account_payments_identified.account_invoice_id.id)],
-                        'partner_unidentified_id': self.account_payment_id.partner_id.id,
-                        'move_name': self.partner_id.name})
+                        'payment_unidentified_id': self.account_payment_id.id,
+                        #'move_name': self.partner_id.name
+                        })
                 ac.post()
         self.state = 'done'
 
