@@ -108,8 +108,6 @@ class AccountPayment(models.Model):
             writeoff_line['amount_currency'] = amount_currency_wo
             writeoff_line['currency_id'] = currency_id
             writeoff_line = aml_obj.create(writeoff_line)
-            _logger.info('MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM')
-            _logger.info(writeoff_line)
             if counterpart_aml['debit']:
                 counterpart_aml['debit'] += credit_wo - debit_wo
             if counterpart_aml['credit']:
@@ -123,8 +121,6 @@ class AccountPayment(models.Model):
         liquidity_aml_dict = self._get_shared_move_line_vals(credit, debit, -amount_currency, move.id, False)
         liquidity_aml_dict.update(self._get_liquidity_move_line_vals(-amount))
         aml = aml_obj.create(liquidity_aml_dict)
-        _logger.info('MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMqqqqqqqqqqqqqqqqqqqq')
-        _logger.info(liquidity_aml_dict)
 
         if self.identified:
             aml.write({'account_id': self.destination_account_id.id})
@@ -140,8 +136,6 @@ class AccountPayment(models.Model):
             counterpart_aml_dict.update({'currency_id': currency_id})
             counterpart_aml = aml_obj.create(counterpart_aml_dict)
 
-        _logger.info('pppppppppppppppppppppppppppppppppppppppppppppppppp')
-        _logger.info(move.line_ids)
         move.post()
         return move
 
@@ -237,8 +231,12 @@ class PaymentIdentified(models.Model):
         if self.amount_identified > self.account_payment_id.amount_unidentified:
             raise ValidationError(_('The amount must not exceed the amount identified'))
         AccountPayment = self.env['account.payment']
+        #amount = 0
+        #list_invoice = []
         for account_payments_identified in self.account_payments_identified_ids:
             if account_payments_identified.confirm and account_payments_identified.amount > 0:
+                #amount += account_payments_identified.amount
+                #list_invoice.append(account_payments_identified.account_invoice_id.id)
                 ac = AccountPayment.create({'partner_id': self.partner_id.id,
                         'amount': account_payments_identified.amount,
                         'payment_date': self.account_payment_id.payment_date,
