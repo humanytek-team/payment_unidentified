@@ -31,13 +31,16 @@ class AccountPayment(models.Model):
     _inherit = 'account.payment'
 
     unidentified = fields.Boolean('Unidentified')
+    identified = fields.Boolean('Identified')
     identified_ids = fields.One2many('payment.identified',
                                         'account_payment_id',
                                         string='Identified Payments')
     amount_identified = fields.Float('Identified Amount',
                         compute='_compute_amount_identified', readonly=True)
-    #amount_unidentified = fields.Float('Unidentified Amount',
-                        #compute='_compute_amount_unidentified', readonly=True)
+    amount_unidentified = fields.Float('Unidentified Amount',
+                        compute='_compute_amount_unidentified', readonly=True)
+    partner_unidentified_id = fields.Many2one('account.payment',
+                                    string='Unidentified ')
 
     @api.one
     def _compute_amount_identified(self):
@@ -46,9 +49,9 @@ class AccountPayment(models.Model):
                                 self.identified_ids
                                 if identified.state == 'done'])
 
-    #@api.one
-    #def _compute_amount_unidentified(self):
-        #self.amount_unidentified = self.amount - self.amount_identified
+    @api.one
+    def _compute_amount_unidentified(self):
+        self.amount_unidentified = self.amount - self.amount_identified
 
 
 
@@ -66,11 +69,17 @@ class AccountPayment(models.Model):
         move = self.env['account.move'].create(self._get_move_vals())
 
         #Write line corresponding to invoice payment
+
+        #if self.identified:
+            #counterpart_aml_dict = self._get_shared_move_line_identified(debit, credit, amount_currency, move.id, False)
+            ##counterpart_aml_dict.update(self._get_liquidity_move_line_vals(amount))
+        #else:
         counterpart_aml_dict = self._get_shared_move_line_vals(debit, credit, amount_currency, move.id, False)
         counterpart_aml_dict.update(self._get_counterpart_move_line_vals(self.invoice_ids))
         counterpart_aml_dict.update({'currency_id': currency_id})
         counterpart_aml = aml_obj.create(counterpart_aml_dict)
-
+        _logger.info('SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS')
+        _logger.info(counterpart_aml.name)
         #Reconcile with the invoices
         if self.payment_difference_handling == 'reconcile' and self.payment_difference:
             writeoff_line = self._get_shared_move_line_vals(0, 0, 0, move.id, False)
@@ -101,6 +110,8 @@ class AccountPayment(models.Model):
             writeoff_line['amount_currency'] = amount_currency_wo
             writeoff_line['currency_id'] = currency_id
             writeoff_line = aml_obj.create(writeoff_line)
+            _logger.info('MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM')
+            _logger.info(writeoff_line)
             if counterpart_aml['debit']:
                 counterpart_aml['debit'] += credit_wo - debit_wo
             if counterpart_aml['credit']:
@@ -113,8 +124,13 @@ class AccountPayment(models.Model):
             amount_currency = 0
         liquidity_aml_dict = self._get_shared_move_line_vals(credit, debit, -amount_currency, move.id, False)
         liquidity_aml_dict.update(self._get_liquidity_move_line_vals(-amount))
-        aml_obj.create(liquidity_aml_dict)
+        aml = aml_obj.create(liquidity_aml_dict)
+        _logger.info('MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMqqqqqqqqqqqqqqqqqqqq')
+        _logger.info(liquidity_aml_dict)
 
+        if self.identified:
+            aml.write({'account_id': self.destination_account_id.id})
+            aml.write({'partner_id': self.partner_unidentified_id.id})
         if self.unidentified:
             aml_dict = self._get_shared_move_line_unidentified(debit, credit, amount_currency, move.id, False)
             aml_dict.update(self._get_counterpart_move_line_unidentified())
@@ -126,9 +142,21 @@ class AccountPayment(models.Model):
             counterpart_aml_dict.update({'currency_id': currency_id})
             counterpart_aml = aml_obj.create(counterpart_aml_dict)
 
+        _logger.info('pppppppppppppppppppppppppppppppppppppppppppppppppp')
+        _logger.info(move.line_ids)
         move.post()
         return move
 
+
+    #def _get_shared_move_line_identified(self, debit, credit, amount_currency, move_id, invoice_id=False):
+        #return {
+            #'partner_id': self.partner_unidentified_id.id or False,
+            #'invoice_id': invoice_id and invoice_id.id or False,
+            #'move_id': move_id,
+            #'debit': debit,
+            #'credit': credit,
+            #'amount_currency': amount_currency or False,
+        #}
 
     def _get_shared_move_line_unidentified(self, debit, credit, amount_currency, move_id, invoice_id=False):
         return {
@@ -208,8 +236,28 @@ class PaymentIdentified(models.Model):
 
     @api.multi
     def confirm(self):
-        if self.amount_identified > self.aaccount_payment_id.amount_identified:
+        if self.amount_identified > self.account_payment_id.amount_unidentified:
             raise ValidationError(_('The amount must not exceed the amount identified'))
+        AccountPayment = self.env['account.payment']
+        for account_payments_identified in self.account_payments_identified_ids:
+            if account_payments_identified.confirm and account_payments_identified.amount > 0:
+                _logger.info('LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL')
+                _logger.info(self.account_payment_id.journal_id.id)
+
+                ac = AccountPayment.create({'partner_id': self.partner_id.id,
+                        'amount': account_payments_identified.amount,
+                        'payment_date': self.account_payment_id.payment_date,
+                        'identified': True,
+                        'payment_type': 'inbound',
+                        'journal_id': self.account_payment_id.journal_id.id,
+                        'partner_type': 'customer',
+                        'payment_method_id': self.account_payment_id.journal_id.inbound_payment_method_ids[0].id,
+                        'invoice_ids': [(4, account_payments_identified.account_invoice_id.id)],
+                        'partner_unidentified_id': self.account_payment_id.partner_id.id})
+                ac.post()
+                _logger.info('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+                _logger.info(ac)
+                AccountPayment
         self.state = 'done'
 
     partner_id = fields.Many2one('res.partner', string='Customer',
@@ -240,6 +288,14 @@ class PaymentIdentified(models.Model):
 
 class AccountPaymentIdentified(models.Model):
     _name = "account.payment.identified"
+
+    @api.multi
+    @api.depends('account_invoice_residual')
+    @api.onchange('amount')
+    def onchange_amount(self):
+        if self.amount > self.account_invoice_residual:
+            self.amount = self.account_invoice_residual
+        return {}
 
     payment_identified_id = fields.Many2one('payment.identified',
                                 string='Payment',

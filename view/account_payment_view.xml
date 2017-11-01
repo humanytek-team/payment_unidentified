@@ -10,13 +10,15 @@
                 <field name="unidentified" attrs="{'invisible': [('payment_type','!=','inbound')], 'readonly': [('state','!=','draft')]}"/>
             </xpath>
             <xpath expr="//sheet" position="inside">
-                <label for="amount_identified" attrs="{'invisible': [('unidentified','=',False)]}"/>
-                <field name="amount_identified" attrs="{'invisible': [('unidentified','=',False)]}" />
-
+                <group>
+                    <field name="amount_identified" attrs="{'invisible': [('unidentified','=',False)]}" />
+                    <field name="amount_unidentified" attrs="{'invisible': [('unidentified','=',False)]}" />
+                </group>
                 <field name="identified_ids" attrs="{'invisible': [('unidentified','=',False)]}" mode="tree">
                     <tree string="Identified Payments" >
                         <field name="partner_id" />
                         <field name="amount_identified" />
+
                         <field name="state" />
                     </tree>
                 </field>
