@@ -78,8 +78,6 @@ class AccountPayment(models.Model):
         counterpart_aml_dict.update(self._get_counterpart_move_line_vals(self.invoice_ids))
         counterpart_aml_dict.update({'currency_id': currency_id})
         counterpart_aml = aml_obj.create(counterpart_aml_dict)
-        _logger.info('SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS')
-        _logger.info(counterpart_aml.name)
         #Reconcile with the invoices
         if self.payment_difference_handling == 'reconcile' and self.payment_difference:
             writeoff_line = self._get_shared_move_line_vals(0, 0, 0, move.id, False)
@@ -241,9 +239,6 @@ class PaymentIdentified(models.Model):
         AccountPayment = self.env['account.payment']
         for account_payments_identified in self.account_payments_identified_ids:
             if account_payments_identified.confirm and account_payments_identified.amount > 0:
-                _logger.info('LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL')
-                _logger.info(self.account_payment_id.journal_id.id)
-
                 ac = AccountPayment.create({'partner_id': self.partner_id.id,
                         'amount': account_payments_identified.amount,
                         'payment_date': self.account_payment_id.payment_date,
@@ -253,11 +248,9 @@ class PaymentIdentified(models.Model):
                         'partner_type': 'customer',
                         'payment_method_id': self.account_payment_id.journal_id.inbound_payment_method_ids[0].id,
                         'invoice_ids': [(4, account_payments_identified.account_invoice_id.id)],
-                        'partner_unidentified_id': self.account_payment_id.partner_id.id})
+                        'partner_unidentified_id': self.account_payment_id.partner_id.id,
+                        'move_name': self.partner_id.name})
                 ac.post()
-                _logger.info('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
-                _logger.info(ac)
-                AccountPayment
         self.state = 'done'
 
     partner_id = fields.Many2one('res.partner', string='Customer',
