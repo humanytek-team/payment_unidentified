@@ -70,10 +70,6 @@ class AccountPayment(models.Model):
 
         #Write line corresponding to invoice payment
 
-        #if self.identified:
-            #counterpart_aml_dict = self._get_shared_move_line_identified(debit, credit, amount_currency, move.id, False)
-            ##counterpart_aml_dict.update(self._get_liquidity_move_line_vals(amount))
-        #else:
         counterpart_aml_dict = self._get_shared_move_line_vals(debit, credit, amount_currency, move.id, False)
         counterpart_aml_dict.update(self._get_counterpart_move_line_vals(self.invoice_ids))
         counterpart_aml_dict.update({'currency_id': currency_id})
@@ -140,16 +136,6 @@ class AccountPayment(models.Model):
         return move
 
 
-    #def _get_shared_move_line_identified(self, debit, credit, amount_currency, move_id, invoice_id=False):
-        #return {
-            #'partner_id': self.partner_unidentified_id.id or False,
-            #'invoice_id': invoice_id and invoice_id.id or False,
-            #'move_id': move_id,
-            #'debit': debit,
-            #'credit': credit,
-            #'amount_currency': amount_currency or False,
-        #}
-
     def _get_shared_move_line_unidentified(self, debit, credit, amount_currency, move_id, invoice_id=False):
         return {
             'partner_id': self.env['res.partner']._find_accounting_partner(self.partner_id).id or False,
@@ -191,20 +177,6 @@ class AccountPayment(models.Model):
         }
 
 
-    #def _get_shared_move_line_vals(self, debit, credit, amount_currency, move_id, invoice_id=False):
-        #if self.unidentified:
-            #debit = debit - (debit * 0.16)
-            #credit = credit - (credit * 0.16)
-        #return {
-            #'partner_id': self.payment_type in ('inbound', 'outbound') and self.env['res.partner']._find_accounting_partner(self.partner_id).id or False,
-            #'invoice_id': invoice_id and invoice_id.id or False,
-            #'move_id': move_id,
-            #'debit': debit,
-            #'credit': credit,
-            #'amount_currency': amount_currency or False,
-        #}
-
-
 class PaymentIdentified(models.Model):
     _name = "payment.identified"
 
@@ -217,7 +189,8 @@ class PaymentIdentified(models.Model):
                 ('payment_identified_id', '=', self.id)]).unlink()
             account_invoice_ids = AccountInvoice.search([
                             ('partner_id.id', '=', self.partner_id.id),
-                            ('state', '=', 'open')
+                            ('state', '=', 'open'),
+                            ('type', '=', 'out_invoice')
                             ])
             for account_invoice in account_invoice_ids:
                 AccountPaymentIdentified.create({
@@ -231,12 +204,8 @@ class PaymentIdentified(models.Model):
         if self.amount_identified > self.account_payment_id.amount_unidentified:
             raise ValidationError(_('The amount must not exceed the amount identified'))
         AccountPayment = self.env['account.payment']
-        #amount = 0
-        #list_invoice = []
         for account_payments_identified in self.account_payments_identified_ids:
             if account_payments_identified.confirm and account_payments_identified.amount > 0:
-                #amount += account_payments_identified.amount
-                #list_invoice.append(account_payments_identified.account_invoice_id.id)
                 ac = AccountPayment.create({'partner_id': self.partner_id.id,
                         'amount': account_payments_identified.amount,
                         'payment_date': self.account_payment_id.payment_date,
@@ -247,7 +216,6 @@ class PaymentIdentified(models.Model):
                         'payment_method_id': self.account_payment_id.journal_id.inbound_payment_method_ids[0].id,
                         'invoice_ids': [(4, account_payments_identified.account_invoice_id.id)],
                         'payment_unidentified_id': self.account_payment_id.id,
-                        #'move_name': self.partner_id.name
                         })
                 ac.post()
         self.state = 'done'
