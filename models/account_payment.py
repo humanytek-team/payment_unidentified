@@ -73,9 +73,10 @@ class AccountPayment(models.Model):
         if self.identified:
             _logger.info(move.state)
             canc = move.button_cancel()
-            #for line in move.line_ids:
-                #if not line.tax_id_secondary:
-                    #line.unlink()
+            if canc:
+                for line in move.line_ids:
+                    if not line.tax_id_secondary:
+                        line.unlink()
             _logger.info('MOOOOOOOOOOOOOOOOOOOOOVEEEEEEEEEEEEEEEEEEEE')
             _logger.info(canc)
             _logger.info('MOOOOOOOOOOOOOOOOOOOOOVEEEEEEEEEEEEEEEEEEEElineeeee')
