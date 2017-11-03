@@ -53,8 +53,6 @@ class AccountPayment(models.Model):
     def _compute_amount_unidentified(self):
         self.amount_unidentified = self.amount - self.amount_identified
 
-
-
     def _create_payment_entry(self, amount):
         """ Create a journal entry corresponding to a payment, if the payment references invoice(s) they are reconciled.
             Return the journal entry.
@@ -118,19 +116,19 @@ class AccountPayment(models.Model):
         liquidity_aml_dict.update(self._get_liquidity_move_line_vals(-amount))
         aml = aml_obj.create(liquidity_aml_dict)
 
-        if self.identified:
-            aml.write({'account_id': self.destination_account_id.id})
-            aml.write({'partner_id': self.payment_unidentified_id.partner_id.id})
-        if self.unidentified:
-            aml_dict = self._get_shared_move_line_unidentified(debit, credit, amount_currency, move.id, False)
-            aml_dict.update(self._get_counterpart_move_line_unidentified())
-            aml_dict.update({'currency_id': currency_id})
-            aml = aml_obj.create(aml_dict)
+        #if self.identified:
+            #aml.write({'account_id': self.destination_account_id.id})
+            #aml.write({'partner_id': self.payment_unidentified_id.partner_id.id})
+        #if self.unidentified:
+            #aml_dict = self._get_shared_move_line_unidentified(debit, credit, amount_currency, move.id, False)
+            #aml_dict.update(self._get_counterpart_move_line_unidentified())
+            #aml_dict.update({'currency_id': currency_id})
+            #aml = aml_obj.create(aml_dict)
 
-            counterpart_aml_dict = self._get_shared_move_line_unidentified(credit, debit, amount_currency, move.id, False)
-            counterpart_aml_dict.update(self._get_move_line_unidentified())
-            counterpart_aml_dict.update({'currency_id': currency_id})
-            counterpart_aml = aml_obj.create(counterpart_aml_dict)
+            #counterpart_aml_dict = self._get_shared_move_line_unidentified(credit, debit, amount_currency, move.id, False)
+            #counterpart_aml_dict.update(self._get_move_line_unidentified())
+            #counterpart_aml_dict.update({'currency_id': currency_id})
+            #counterpart_aml = aml_obj.create(counterpart_aml_dict)
 
         move.post()
         return move
