@@ -71,6 +71,7 @@ class AccountPayment(models.Model):
             counterpart_aml_dict.update({'currency_id': currency_id})
             counterpart_aml = aml_obj.create(counterpart_aml_dict)
         if self.identified:
+            move.button_cancel()
             for line in move.line_ids:
                 if not line.tax_id_secondary:
                     line.unlink()
@@ -158,7 +159,7 @@ class AccountPayment(models.Model):
             ##counterpart_aml_dict.update({'currency_id': currency_id})
             ##counterpart_aml = aml_obj.create(counterpart_aml_dict)
 
-        #move.post()
+        move.post()
         return move
 
 
