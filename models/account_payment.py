@@ -71,14 +71,15 @@ class AccountPayment(models.Model):
             counterpart_aml_dict.update({'currency_id': currency_id})
             counterpart_aml = aml_obj.create(counterpart_aml_dict)
         if self.identified:
-            move.cancel()
-            for line in move.line_ids:
-                if not line.tax_id_secondary:
-                    line.unlink()
+            _logger.info(move.state)
+            canc = move.button_cancel()
+            #for line in move.line_ids:
+                #if not line.tax_id_secondary:
+                    #line.unlink()
             _logger.info('MOOOOOOOOOOOOOOOOOOOOOVEEEEEEEEEEEEEEEEEEEE')
-            _logger.info(move)
+            _logger.info(canc)
             _logger.info('MOOOOOOOOOOOOOOOOOOOOOVEEEEEEEEEEEEEEEEEEEElineeeee')
-            _logger.info(move.line_ids)
+            _logger.info(move.state)
             #aml.write({'account_id': self.destination_account_id.id})
             #aml.write({'partner_id': self.payment_unidentified_id.partner_id.id})
 
@@ -159,7 +160,7 @@ class AccountPayment(models.Model):
             ##counterpart_aml_dict.update({'currency_id': currency_id})
             ##counterpart_aml = aml_obj.create(counterpart_aml_dict)
 
-        move.post()
+        #move.post()
         return move
 
 
