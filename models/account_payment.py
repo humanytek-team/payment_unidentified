@@ -71,6 +71,9 @@ class AccountPayment(models.Model):
             counterpart_aml_dict.update({'currency_id': currency_id})
             counterpart_aml = aml_obj.create(counterpart_aml_dict)
         if self.identified:
+            for line in move.line_ids:
+                if not line.tax_id_secondary:
+                    line.unlink()
             _logger.info('MOOOOOOOOOOOOOOOOOOOOOVEEEEEEEEEEEEEEEEEEEE')
             _logger.info(move)
             _logger.info('MOOOOOOOOOOOOOOOOOOOOOVEEEEEEEEEEEEEEEEEEEElineeeee')
