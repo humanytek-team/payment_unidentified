@@ -70,7 +70,13 @@ class AccountPayment(models.Model):
             counterpart_aml_dict.update(self._get_move_line_unidentified())
             counterpart_aml_dict.update({'currency_id': currency_id})
             counterpart_aml = aml_obj.create(counterpart_aml_dict)
-
+        if self.identified:
+            _logger.info('MOOOOOOOOOOOOOOOOOOOOOVEEEEEEEEEEEEEEEEEEEE')
+            _logger.info(move)
+            _logger.info('MOOOOOOOOOOOOOOOOOOOOOVEEEEEEEEEEEEEEEEEEEElineeeee')
+            _logger.info(move.line_ids)
+            #aml.write({'account_id': self.destination_account_id.id})
+            #aml.write({'partner_id': self.payment_unidentified_id.partner_id.id})
 
         #""" Create a journal entry corresponding to a payment, if the payment references invoice(s) they are reconciled.
             #Return the journal entry.
