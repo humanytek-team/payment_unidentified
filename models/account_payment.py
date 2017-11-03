@@ -55,6 +55,20 @@ class AccountPayment(models.Model):
 
     def _create_payment_entry(self, amount):
         move = super(AccountPayment, self)._create_payment_entry(amount)
+        aml_obj = self.env['account.move.line'].with_context(check_move_validity=False)
+        debit, credit, amount_currency, currency_id = aml_obj.with_context(date=self.payment_date).compute_amount_fields(amount, self.currency_id, self.company_id.currency_id, invoice_currency)
+        if self.unidentified:
+            aml_dict = self._get_shared_move_line_unidentified(debit, credit, amount_currency, move.id, False)
+            aml_dict.update(self._get_counterpart_move_line_unidentified())
+            aml_dict.update({'currency_id': currency_id})
+            aml = aml_obj.create(aml_dict)
+
+            counterpart_aml_dict = self._get_shared_move_line_unidentified(credit, debit, amount_currency, move.id, False)
+            counterpart_aml_dict.update(self._get_move_line_unidentified())
+            counterpart_aml_dict.update({'currency_id': currency_id})
+            counterpart_aml = aml_obj.create(counterpart_aml_dict)
+
+
         #""" Create a journal entry corresponding to a payment, if the payment references invoice(s) they are reconciled.
             #Return the journal entry.
         #"""
