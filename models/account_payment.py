@@ -30,6 +30,19 @@ class AccountPayment(models.Model):
     _name = "account.payment"
     _inherit = 'account.payment'
 
+    @api.multi
+    @api.onchange('partner_id')
+    def onchange_partner_id(self):
+        if not self.partner_id.unidentified_payment and self.unidentified:
+            self.partner_id = False
+            #raise ValidationError(_('Customer Error'))
+
+    @api.multi
+    @api.onchange('unidentified')
+    def onchange_unidentified_id(self):
+        #if not self.partner_id.unidentified_payment and self.unidentified:
+        self.partner_id = False
+
     unidentified = fields.Boolean('Unidentified')
     identified = fields.Boolean('Identified')
     identified_ids = fields.One2many('payment.identified',
@@ -41,6 +54,9 @@ class AccountPayment(models.Model):
                         compute='_compute_amount_unidentified', readonly=True)
     payment_unidentified_id = fields.Many2one('account.payment',
                                     string='Unidentified ')
+    #partner_id = fields.Many2one(
+        #domain=lambda self: [
+            #('unidentified_payment', '=', self.unidentified)])
 
     @api.one
     def _compute_amount_identified(self):
@@ -55,32 +71,40 @@ class AccountPayment(models.Model):
 
     def _create_payment_entry(self, amount):
         move = super(AccountPayment, self)._create_payment_entry(amount)
-        aml_obj = self.env['account.move.line'].with_context(check_move_validity=False)
-        invoice_currency = False
-        if self.invoice_ids and all([x.currency_id == self.invoice_ids[0].currency_id for x in self.invoice_ids]):
-            invoice_currency = self.invoice_ids[0].currency_id
-        debit, credit, amount_currency, currency_id = aml_obj.with_context(date=self.payment_date).compute_amount_fields(amount, self.currency_id, self.company_id.currency_id, invoice_currency)
-        if self.unidentified:
-            aml_dict = self._get_shared_move_line_unidentified(debit, credit, amount_currency, move.id, False)
-            aml_dict.update(self._get_counterpart_move_line_unidentified())
-            aml_dict.update({'currency_id': currency_id})
-            aml = aml_obj.create(aml_dict)
+        if move:
+            aml_obj = self.env['account.move.line'].with_context(check_move_validity=False)
+            invoice_currency = False
+            if self.invoice_ids and all([x.currency_id == self.invoice_ids[0].currency_id for x in self.invoice_ids]):
+                invoice_currency = self.invoice_ids[0].currency_id
+            debit, credit, amount_currency, currency_id = aml_obj.with_context(date=self.payment_date).compute_amount_fields(amount, self.currency_id, self.company_id.currency_id, invoice_currency)
+            if self.unidentified:
+                aml_dict = self._get_shared_move_line_unidentified(debit, credit, amount_currency, move.id, False)
+                aml_dict.update(self._get_counterpart_move_line_unidentified())
+                aml_dict.update({'currency_id': currency_id})
+                aml = aml_obj.create(aml_dict)
 
-            counterpart_aml_dict = self._get_shared_move_line_unidentified(credit, debit, amount_currency, move.id, False)
-            counterpart_aml_dict.update(self._get_move_line_unidentified())
-            counterpart_aml_dict.update({'currency_id': currency_id})
-            counterpart_aml = aml_obj.create(counterpart_aml_dict)
-        if self.identified:
-            _logger.info(move.state)
-            canc = move.button_cancel()
-            if canc:
-                for line in move.line_ids:
-                    if not line.tax_id_secondary:
-                        line.unlink()
-            _logger.info('MOOOOOOOOOOOOOOOOOOOOOVEEEEEEEEEEEEEEEEEEEE')
-            _logger.info(canc)
-            _logger.info('MOOOOOOOOOOOOOOOOOOOOOVEEEEEEEEEEEEEEEEEEEElineeeee')
-            _logger.info(move.state)
+                counterpart_aml_dict = self._get_shared_move_line_unidentified(credit, debit, amount_currency, move.id, False)
+                counterpart_aml_dict.update(self._get_move_line_unidentified())
+                counterpart_aml_dict.update({'currency_id': currency_id})
+                counterpart_aml = aml_obj.create(counterpart_aml_dict)
+            if self.identified:
+                #_logger.info(move.state)
+                canc = move.button_cancel()
+                if canc:
+                    #list_del = []
+                    for line in move.line_ids:
+                        if line.tax_id_secondary:
+                        ##tuple_del = (2, line.id)
+                        ##list_del.append(line.id)
+                    ##move.write({'line_ids': list_del})
+                            line.unlink()
+
+        #move.post()
+        return move
+            #_logger.info('MOOOOOOOOOOOOOOOOOOOOOVEEEEEEEEEEEEEEEEEEEE')
+            #_logger.info(canc)
+            #_logger.info('MOOOOOOOOOOOOOOOOOOOOOVEEEEEEEEEEEEEEEEEEEElineeeee')
+            #_logger.info(move.state)
             #aml.write({'account_id': self.destination_account_id.id})
             #aml.write({'partner_id': self.payment_unidentified_id.partner_id.id})
 
@@ -162,7 +186,7 @@ class AccountPayment(models.Model):
             ##counterpart_aml = aml_obj.create(counterpart_aml_dict)
 
         #move.post()
-        return move
+        #return move
 
 
     def _get_shared_move_line_unidentified(self, debit, credit, amount_currency, move_id, invoice_id=False):
